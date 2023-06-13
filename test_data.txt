@@ -1,0 +1,25 @@
+-- Добавление данных о самолетах
+INSERT INTO aircraft (id, model, capacity) VALUES (1, 'Boeing 737-800', 189), (2, 'Airbus A320', 180);
+
+-- Добавление данных об аэропортах
+INSERT INTO airport (id, city_id, name) VALUES(1, 1, 'DME'), (2, 2, 'AER'), (3, 3, 'LED');
+
+--Добавление данных о городах
+INSERT INTO city (id, name) VALUES (1, 'Москва'), (2, 'Сочи'), (3, 'Санкт-Петербург');
+
+--Добавление данных о рейсах
+INSERT INTO flight (id, flight_number, departure_airport_id, arrival_airport_id, aircraft_id, departure_time, arrival_time, ticket_available, econom_price, business_price)
+VALUES(1, 'G-1115', 1, 2, 2, '2023-05-16 02:00:00.000', '2023-05-16 04:40:00.000', 180, 35244, 88108),
+(2, 'G-3650', 1, 3, 2, '2023-05-15 20:20:00.000', '2023-05-15 22:10:00.000', 178, 26412, 66030),
+(3, 'G-6169', 2, 1, 1, '2023-05-16 05:30:00.000', '2023-05-16 09:20:00.000', 0, 27341, 68353),
+(4, 'G-4375', 2, 3, 1, '2023-05-17 20:20:00.000', '2023-05-18 00:40:00.000', 189, 34998, 87495),
+(5, 'G-6491', 3, 1, 2, '2023-05-16 06:30:00.000', '2023-05-16 08:20:00.000', 178, 37533, 56300),
+(6, 'G-1115', 1, 2, 2, '2023-05-18 02:00:00.000', '2023-05-18 04:40:00.000', 180, 24560, 61400),
+(7, 'G-4375', 2, 3, 1, '2023-05-19 20:20:00.000', '2023-05-20 00:40:00.000', 189, 38504, 57756);
+
+--Добавление данных о пользователях
+INSERT INTO user (id, first_name, middle_name, last_name, email, password_hash, `role`)
+VALUES(1, 'admin', NULL, 'admin', 'admin@gosling.com', '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918', 'admin'),
+(2, 'user', NULL, 'user', 'user@gosling.com', '04f8996da763b7a969b1028ee3007569eaf3a635486ddab211d512c85b9df8fb', 'user'),
+(3, 'manager', NULL, 'manager', 'manager@gosling.com', '6ee4a469cd4e91053847f5d3fcb61dbcc91e8f0ef10be7748da4c4a1ba382d17', 'manager'),
+(4, 'finance', NULL, 'finance', 'finance@gosling.com', 'eab762a03fd979a04cc4706e6536d382bc89d2d1356afcd054a16b2235ecd471', 'finance');

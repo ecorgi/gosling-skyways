@@ -1,0 +1,79 @@
+-- Создание базы данных для приложения
+DROP DATABASE IF EXISTS goslingskyways;
+CREATE DATABASE goslingskyways;
+USE goslingskyways;
+
+-- Создание таблицы "aircraft" для самолетов
+CREATE TABLE aircraft (
+    id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    model VARCHAR(50) NOT NULL,
+    capacity INT(11) NOT NULL
+);
+
+-- Создание таблицы "city" для городов отправления и прибытия
+CREATE TABLE city (
+    id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(50) NOT NULL
+);
+
+-- Создание таблицы "user" для пользователей приложения
+CREATE TABLE user (
+    id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    first_name VARCHAR(100) NOT NULL,
+    middle_name VARCHAR(100) DEFAULT NULL,
+    last_name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL,
+    password_hash VARCHAR(64) NOT NULL,
+    ROLE ENUM('user', 'admin', 'manager', 'finance') NOT NULL
+);
+
+-- Создание таблицы "airport" для аэропортов
+CREATE TABLE airport (
+    id int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    city_id int(11) NOT NULL,
+    name varchar(8) NOT NULL,
+    KEY airport_FK (city_id),
+    FOREIGN KEY (city_id) REFERENCES city (id)
+);
+
+-- Создание таблицы "flight" для рейсов
+CREATE TABLE flight (
+    id int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    flight_number varchar(10) NOT NULL,
+    departure_airport_id int(11) NOT NULL,
+    arrival_airport_id int(11) NOT NULL,
+    aircraft_id int(11) NOT NULL,
+    departure_time datetime NOT NULL,
+    arrival_time datetime NOT NULL,
+    ticket_available int(11) NOT NULL,
+    econom_price int(11) NOT NULL,
+    business_price int(11) NOT NULL,
+    FOREIGN KEY (departure_airport_id) REFERENCES airport (id),
+    FOREIGN KEY (arrival_airport_id) REFERENCES airport (id),
+    FOREIGN KEY (aircraft_id) REFERENCES aircraft (id)
+);
+
+-- Создание таблицы "reservation" для бронирований
+CREATE TABLE reservation (
+    id int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    user_id int(11) NOT NULL,
+    flight_id int(11) NOT NULL,
+    class enum('econom','business') NOT NULL,
+    status enum('paid','cancelled') NOT NULL,
+    price int(11) NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES user (id),
+    FOREIGN KEY (flight_id) REFERENCES flight (id)
+);
+
+-- Триггер, не позволяющий удалить аккаунт с имеющимися бронированиями
+CREATE TRIGGER prevent_user_delete
+BEFORE DELETE ON user
+FOR EACH ROW
+BEGIN
+	DECLARE count_reservations INT;
+    SELECT COUNT(*) INTO count_reservations FROM reservation WHERE user_id = OLD.id;
+	IF count_reservations > 0 THEN
+		SIGNAL SQLSTATE '45000'
+		SET MESSAGE_TEXT = 'Cannot delete user with active reservations';
+	END IF;
+END;
